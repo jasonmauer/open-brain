@@ -1,193 +1,102 @@
-# Open Brain 🧠
+# 🧠 Open Brain
 
-A standalone, Docker-based personal memory management system with semantic search, analytics, and a beautiful dashboard.
+> Personal semantic memory system with MCP interface. Store, search, and analyze everything that matters to you.
 
-## Features
+[![GitHub Stars](https://img.shields.io/github/stars/benclawbot/open-brain)](https://github.com/benclawbot/open-brain/stargazers)
+[![Docker](https://img.shields.io/docker/pulls/benclawbot/open-brain)](https://hub.docker.com/r/benclawbot/open-brain)
+[![License](https://img.shields.io/github/license/benclawbot/open-brain)](https://github.com/benclawbot/open-brain/blob/master/LICENSE)
 
-- **Semantic Memory Storage**: Store memories with AI-powered embeddings
-- **Multiple Data Sources**: Import from Telegram, WhatsApp, Claude Code, Gmail, and local Markdown files
-- **REST API**: Full FastAPI server for programmatic access
-- **Web Dashboard**: Streamlit-based UI for browsing and managing memories
-- **Analytics**: Weekly reports, trend analysis, and statistics
-- **Notifications**: Telegram and email alerts
-- **Docker-Ready**: One command to start everything
+## What is Open Brain?
 
-## Quick Start
+Open Brain is a **personal knowledge management system** that acts as your second brain. It:
+
+- 📥 **Ingests** data from anywhere (Telegram, WhatsApp, Claude Code, Gmail, files)
+- 🧠 **Embeds** everything semantically (OpenRouter, OpenAI, Ollama, or any custom API)
+- 🔍 **Searches** instantly using vector similarity
+- 📊 **Analyzes** trends, clusters, and connections
+- 🔔 **Notifies** you of important changes
+- 🌐 **Serves** via MCP, REST API, CLI, or Dashboard
+
+Think of it as **Obsidian meets ChatGPT memory** — but accessible from any tool.
+
+---
+
+## ✨ Features
+
+### Core
+- **Semantic Search** — Find memories by meaning, not just keywords
+- **Auto-Tagging** — Automatic topic and entity extraction
+- **Entity Recognition** — Extracts people, places, organizations, dates
+- **Trend Analysis** — See what topics are emerging or declining
+
+### Integrations
+- **MCP Server** — Use from Claude, Codex, or any MCP client
+- **REST API** — HTTP access for any application
+- **CLI** — Command-line interface for quick operations
+- **Source Connectors** — Import from Telegram, WhatsApp, Gmail, Claude Code
+
+### UI
+- **Streamlit Dashboard** — Visualize memories, stats, and trends
+- **Weekly Reports** — Automated markdown reports
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Docker & Docker Compose
-- PostgreSQL (handled by Docker)
-- Ollama for embeddings (optional, for semantic search)
+- [Docker](https://docker.com) + Docker Compose
+- At least 2GB RAM
+- (Optional) OpenRouter API key for embeddings
 
-### 1. Clone and Setup
-
-```bash
-cd /home/tom/.openclaw/workspace
-git clone <repo> openbrain
-cd openbrain
-```
-
-### 2. Configure Environment
+### 1. Clone & Configure
 
 ```bash
-# Copy environment template
+git clone https://github.com/benclawbot/open-brain.git
+cd open-brain
+
+# Copy environment file
 cp .env.example .env
-
-# Edit .env with your settings
-nano .env
 ```
 
-Required environment variables:
-- `DB_PASSWORD` - PostgreSQL password
-- `OLLAMA_BASE_URL` - Ollama server URL (default: http://localhost:11434)
-- `EMBEDDER_MODEL` - Embedding model (default: nomic-embed-text)
+### 2. Set Environment Variables
 
-Optional:
-- `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` - For Telegram notifications
-- `SMTP_HOST`, `SMTP_USERNAME`, `SMTP_PASSWORD` - For email notifications
+Edit `.env`:
+
+```env
+# Database
+DB_PASSWORD=your_secure_password
+
+# Embeddings (OpenRouter = FREE)
+OPENROUTER_API_KEY=your_openrouter_key
+
+# Optional: Telegram notifications
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+```
+
+> **No API key?** OpenRouter has a free tier. Just sign up at [openrouter.ai](https://openrouter.ai).
 
 ### 3. Start Everything
 
 ```bash
-# Start all services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop everything
-docker-compose down
+docker compose up -d
 ```
 
-### 4. Access the Services
+### 4. Access Services
 
-| Service | URL |
-|---------|-----|
-| Dashboard | http://localhost:8501 |
-| API Docs | http://localhost:8000/docs |
-| API | http://localhost:8000 |
+| Service | URL | Description |
+|---------|-----|-------------|
+| **Dashboard** | http://localhost:8501 | Streamlit UI |
+| **MCP Server** | http://localhost:8080 | MCP protocol |
+| **REST API** | http://localhost:8000 | HTTP API |
+| **API Docs** | http://localhost:8000/docs | Swagger docs |
 
-## CLI Usage
+---
 
-Install the CLI:
+## 🔧 Configuration
 
-```bash
-pip install -e .
-```
-
-### Commands
-
-```bash
-# Search memories
-openbrain search "what did I learn about Python"
-
-# Store a new memory
-openbrain store "Remembered to water the plants" --tag reminder
-
-# Show statistics
-openbrain stats
-
-# Import from source
-openbrain import telegram /path/to/telegram/export
-openbrain import whatsapp /path/to/chat.txt
-openbrain import gmail /path/to/gmail/takeout
-openbrain import file /path/to/notes/
-
-# Generate weekly report
-openbrain report --days 7
-
-# Start API server
-openbrain serve --port 8000
-```
-
-## REST API
-
-### Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/memories` | List all memories |
-| POST | `/memories` | Create new memory |
-| GET | `/memories/{id}` | Get specific memory |
-| POST | `/memories/search` | Search memories |
-| GET | `/stats` | Get statistics |
-| GET | `/trends` | Get trending topics |
-| GET | `/report/weekly` | Get weekly report |
-
-### Example
-
-```bash
-# Search memories
-curl -X POST http://localhost:8000/memories/search \
-  -H "Content-Type: application/json" \
-  -d '{"query": "learning", "limit": 5}'
-
-# Store memory
-curl -X POST http://localhost:8000/memories \
-  -H "Content-Type: application/json" \
-  -d '{"content": "My new memory", "source": "api"}'
-```
-
-## Data Import
-
-### Telegram
-Export your Telegram data and import:
-```bash
-openbrain import telegram /path/to/telegram_export
-```
-
-### WhatsApp
-Export a chat and import:
-```bash
-openbrain import whatsapp /path/to/chat.txt
-```
-
-### Claude Code
-Point to your Claude Code session logs:
-```bash
-openbrain import claude_code /path/to/claude_sessions
-```
-
-### Gmail
-Import from Gmail takeout:
-```bash
-openbrain import gmail /path/to/gmail_takeout
-```
-
-### File Watcher
-Watch a folder for new Markdown files:
-```bash
-# One-time import
-openbrain import file /path/to/notes/
-
-# Or watch continuously
-python -m src.connectors.file_watcher /path/to/notes
-```
-
-## Docker Development
-
-### Development Mode
-
-```bash
-# Start with hot reload
-docker-compose up
-
-# Rebuild specific service
-docker-compose build api
-docker-compose up api
-```
-
-### Production Mode
-
-```bash
-# Use production docker-compose file
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-## Configuration
-
-All configuration is in `config/settings.yaml`:
+All settings in `config/settings.yaml`:
 
 ```yaml
 database:
@@ -198,115 +107,329 @@ database:
   password: ${DB_PASSWORD}
 
 embedder:
-  provider: ollama
-  model: nomic-embed-text
+  # Providers: openrouter, openai, ollama, custom
+  provider: openrouter
+  model: text-embedding-3-small
   dimensions: 768
-  base_url: http://host.docker.internal:11434
 
 mcp:
   host: 0.0.0.0
   port: 8080
 
-tags:
-  deny_list:
-    - password
-    - secret
-  default_tags:
-    - auto
+api:
+  host: 0.0.0.0
+  port: 8000
 
-analytics:
-  trend_weeks: 4
-  weekly_report_day: 0
+dashboard:
+  port: 8501
 ```
 
-## Scripts
+### Embedder Providers
 
-### Backup
+| Provider | Env Variable | Notes |
+|----------|-------------|-------|
+| **OpenRouter** (default) | `OPENROUTER_API_KEY` | Free tier available |
+| OpenAI | `OPENAI_API_KEY` | Paid |
+| Ollama | `OLLAMA_BASE_URL` | Local, free |
+| Custom | `CUSTOM_API_URL` + `CUSTOM_API_KEY` | Any OpenAI-compatible |
+
+---
+
+## 📡 Usage
+
+### CLI
+
 ```bash
-# Run backup
-./scripts/backup.sh
+# Install
+pip install -e .
 
-# Schedule daily backups (cron)
-0 2 * * * /path/to/openbrain/scripts/backup.sh
+# Search memories
+openbrain search "what did I learn about AI"
+
+# Store a memory
+openbrain store "Meeting with Oliver about trading bot" --source telegram --tags ai,trading
+
+# Show stats
+openbrain stats
+
+# Generate weekly report
+openbrain report
+
+# Start API server
+openbrain serve
 ```
 
-### Health Check
+### MCP Tools
+
+Connect any MCP client to `http://localhost:8080`:
+
+```python
+# Example: Using memory_search
+{
+  "name": "memory_search",
+  "arguments": {
+    "query": "trading strategies",
+    "limit": 5,
+    "sources": ["telegram", "claude"]
+  }
+}
+```
+
+### REST API
+
 ```bash
-# Run health check
-./scripts/healthcheck.sh
+# Search
+curl -X POST http://localhost:8000/memories/search \
+  -H "Content-Type: application/json" \
+  -d '{"query": "AI agents", "limit": 5}'
 
-# Schedule regular checks (cron)
-*/15 * * * * /path/to/openbrain/scripts/healthcheck.sh
+# Store
+curl -X POST http://localhost:8000/memories \
+  -H "Content-Type: application/json" \
+  -d '{"content": "New idea", "source": "manual"}'
+
+# Stats
+curl http://localhost:8000/stats
 ```
 
-## Project Structure
+---
+
+## 🏗 Architecture
 
 ```
-openbrain/
-├── config/              # Configuration files
-│   └── settings.yaml
-├── data/                # Data storage (backups, uploads)
-├── scripts/             # Utility scripts
-│   ├── backup.sh
-│   └── healthcheck.sh
+┌─────────────────────────────────────────────────────────────┐
+│                        Clients                               │
+│   Claude Code | Codex | OpenClaw | Custom Apps | CLI       │
+└─────────────────────────┬───────────────────────────────────┘
+                          │ MCP / HTTP / CLI
+                          ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      Open Brain                              │
+│  ┌─────────────┐  ┌──────────────┐  ┌──────────────────┐   │
+│  │   MCP API   │  │  REST API   │  │     CLI Tools    │   │
+│  └─────────────┘  └──────────────┘  └──────────────────┘   │
+│  ┌─────────────────────────────────────────────────────────┐ │
+│  │              Application Layer                          │ │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐  │ │
+│  │  │Extractors│ │  Tagger  │ │Analytics │ │ Notifier │  │ │
+│  │  │ (Entities│ │ (Auto-tag│ │ (Trends) │ │(Telegram)│  │ │
+│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘  │ │
+│  └─────────────────────────────────────────────────────────┘ │
+│  ┌─────────────────────────────────────────────────────────┐ │
+│  │              Embedder (Multi-Provider)                  │ │
+│  │   OpenRouter | OpenAI | Ollama | Custom                 │ │
+│  └─────────────────────────────────────────────────────────┘ │
+└─────────────────────────┬───────────────────────────────────┘
+                          │
+┌─────────────────────────▼───────────────────────────────────┐
+│                   PostgreSQL + pgvector                      │
+│   memory table with vector embeddings, GIN indexes          │
+│   for tags/entities, IVFFlat for similarity search          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Components
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| Database | PostgreSQL + pgvector | Storage + vector search |
+| MCP Server | FastMCP | Tool interface for AI agents |
+| REST API | FastAPI | HTTP access |
+| CLI | Click | Terminal commands |
+| Dashboard | Streamlit | Visual UI |
+| Embedder | requests | Multi-provider embeddings |
+| Extractors | NLTK/spaCy | Entity extraction |
+
+---
+
+## 📁 Project Structure
+
+```
+open-brain/
+├── config/
+│   └── settings.yaml          # Configuration
 ├── src/
-│   ├── api/            # REST API (FastAPI)
-│   │   └── main.py
-│   ├── cli/            # CLI tools
-│   │   ├── __init__.py
-│   │   ├── search.py
-│   │   ├── store.py
-│   │   ├── stats.py
-│   │   └── ...
-│   ├── connectors/     # Data source connectors
-│   │   ├── telegram.py
-│   │   ├── whatsapp.py
-│   │   ├── gmail.py
-│   │   └── file_watcher.py
-│   ├── notifications/   # Notification handlers
-│   │   ├── telegram_bot.py
-│   │   └── email_notifier.py
-│   ├── db/             # Database layer
-│   ├── embedder/       # Embedding generation
-│   ├── extractors/     # Entity/tag extraction
-│   └── analytics/     # Trends & reports
-├── ui/                 # Streamlit dashboard
-│   └── dashboard.py
-├── docker-compose.yml
-├── Dockerfile
-├── requirements.txt
+│   ├── main.py                # MCP server entry
+│   ├── db/                    # Database layer
+│   │   ├── schema.sql
+│   │   ├── connection.py
+│   │   └── queries.py
+│   ├── embedder/              # Multi-provider embeddings
+│   ├── extractors/            # NER + tagging
+│   ├── analytics/             # Trends + reports
+│   ├── connectors/            # Source importers
+│   ├── cli/                   # CLI commands
+│   ├── api/                   # REST API
+│   ├── notifications/         # Telegram + email
+│   └── ingestion/             # Bulk import
+├── ui/
+│   └── dashboard.py           # Streamlit dashboard
+├── scripts/
+│   ├── setup_db.py            # Database setup
+│   ├── backup.sh              # Automated backups
+│   └── healthcheck.sh         # Health monitoring
+├── tests/
+│   └── test_core.py
+├── docker-compose.yml         # Full stack
+├── Dockerfile                 # App container
+├── pyproject.toml             # CLI package
+├── requirements.txt           # Python deps
 └── README.md
 ```
 
-## Troubleshooting
+---
 
-### Database Connection Failed
-```bash
-# Check if PostgreSQL is running
-docker-compose ps
+## 🔌 Source Connectors
 
-# Check logs
-docker-compose logs postgres
+### Telegram
+
+```python
+from src.connectors.telegram import TelegramImporter
+
+importer = TelegramImporter(
+    export_file="telegram_export.json"
+)
+importer.import_all(db_conn)
 ```
 
-### Embeddings Not Working
-```bash
-# Check Ollama
-curl http://localhost:11434/api/tags
+### WhatsApp
 
-# Pull the model
-ollama pull nomic-embed-text
+```python
+from src.connectors.whatsapp import WhatsAppImporter
+
+importer = WhatsAppImporter(
+    export_file="whatsapp_chat.txt"
+)
+importer.import_all(db_conn)
 ```
 
-### API Not Responding
-```bash
-# Check API logs
-docker-compose logs api
+### Claude Code
 
-# Check if port is exposed
-docker-compose port api 8000
+```python
+from src.connectors.claude_code import ClaudeCodeImporter
+
+importer = ClaudeCodeImporter(
+    sessions_path="~/.claude/sessions"
+)
+importer.import_all(db_conn)
 ```
 
-## License
+### Gmail
 
-MIT License - Feel free to use and modify!
+```python
+from src.connectors.gmail import GmailImporter
+
+importer = GmailImporter(
+    takeout_path="./mail"
+)
+importer.import_all(db_conn)
+```
+
+---
+
+## 📊 Analytics
+
+### Trend Detection
+
+Automatically detects:
+- **Emerging topics** — Tags increasing >50% vs baseline
+- **Declining topics** — Tags dropping >30%
+- **New entities** — People/places appearing for first time
+- **Co-occurrence** — Topics that appear together
+
+### Weekly Reports
+
+Generated every Sunday via cron:
+
+```markdown
+# Weekly Memory Report
+
+### Activity
+- New memories: 47
+- By source: telegram: 23, claude: 15, manual: 9
+
+### What's Hot
+- ai: +200% (15 mentions)
+- trading: +50% (8 mentions)
+
+### Insights
+- You're researching AI agents heavily this week
+- Oliver appeared 5 times — significant collaboration
+```
+
+---
+
+## 🔔 Notifications
+
+### Telegram Alerts
+
+- New emerging trends
+- Weekly reports
+- Memory stats summaries
+
+### Email
+
+- Daily digests
+- Weekly reports
+- Anomaly alerts
+
+---
+
+## 🐳 Docker Services
+
+| Service | Image | Ports |
+|---------|-------|-------|
+| postgres | pgvector/pgvector:0.5.1 | 5432 |
+| api | benclawbot/open-brain | 8000 |
+| dashboard | benclawbot/open-brain | 8501 |
+| mcp | benclawbot/open-brain | 8080 |
+
+---
+
+## 🤖 Phone Installation (ARM)
+
+For running on an old Android phone converted to Linux:
+
+```bash
+# Use ARM-compatible images
+docker-compose -f docker-compose.arm.yml up -d
+
+# Or build locally on phone
+docker build --platform=linux/arm64 .
+```
+
+Resources: ~500MB RAM, ~1GB storage
+
+---
+
+## 🧪 Testing
+
+```bash
+# Run tests
+pytest tests/
+
+# Test MCP connection
+python -c "from src.main import mcp; print(mcp)"
+```
+
+---
+
+## 📝 License
+
+MIT License — do whatever you want with it.
+
+---
+
+## 🙏 Acknowledgments
+
+- [pgvector](https://github.com/pgvector/pgvector) — Vector similarity for PostgreSQL
+- [FastMCP](https://github.com/jlowin/fastmcp) — MCP framework
+- [OpenRouter](https://openrouter.ai) — Free embedding API
+
+---
+
+## 🔗 Links
+
+- [GitHub](https://github.com/benclawbot/open-brain)
+- [Report Issues](https://github.com/benclawbot/open-brain/issues)
+- [Discussions](https://github.com/benclawbot/open-brain/discussions)
