@@ -303,7 +303,7 @@ def format_memory_list(memories: List[Dict]) -> str:
     for mem in memories:
         lines.append(f"ID: {mem.get('id')}")
         lines.append(f"Source: {mem.get('source')}")
-        lines.append(f"Content: {(mem.get('content') or '')[:100]}...")
+        lines.append(f"Content: {mem.get('content') or ''}")
         lines.append(f"Tags: {', '.join(mem.get('tags', []))}")
         lines.append(f"Created: {mem.get('created_at')}")
         lines.append("---")
