@@ -263,14 +263,14 @@ def get_memories_by_entity(
 
 
 def get_today_memories(limit: int = 10) -> List[Dict[str, Any]]:
-    """Get memories from today."""
+    """Get memories from the past 24 hours."""
     with get_db_cursor() as cursor:
         cursor.execute("""
             SELECT id, source, source_id, content, raw_content,
                    entities, tags, tag_sources, importance, created_at,
                    original_date, language, metadata
             FROM memory
-            WHERE created_at >= CURRENT_DATE
+            WHERE created_at >= NOW() - INTERVAL '24 hours'
             ORDER BY importance DESC, created_at DESC
             LIMIT %s
         """, (limit,))

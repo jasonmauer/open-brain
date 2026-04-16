@@ -37,7 +37,7 @@ CREATE INDEX IF NOT EXISTS idx_memory_content_fts ON memory USING GIN (to_tsvect
 -- Function to generate embeddings (placeholder - computed in Python)
 -- This allows us to store pre-computed embeddings
 
--- Function to get memories from today
+-- Function to get memories from the past 24 hours
 CREATE OR REPLACE FUNCTION get_today_memories(limit_count INTEGER DEFAULT 10)
 RETURNS TABLE (
     id UUID,
@@ -51,7 +51,7 @@ BEGIN
     RETURN QUERY
     SELECT m.id, m.source, m.content, m.tags, m.created_at, m.importance
     FROM memory m
-    WHERE m.created_at >= CURRENT_DATE
+    WHERE m.created_at >= NOW() - INTERVAL '24 hours'
     ORDER BY m.importance DESC, m.created_at DESC
     LIMIT limit_count;
 END;

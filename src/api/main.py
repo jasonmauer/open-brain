@@ -3,6 +3,7 @@ Open Brain REST API.
 FastAPI server for memory operations.
 """
 import os
+from datetime import datetime
 from typing import List, Optional
 from contextlib import asynccontextmanager
 
@@ -75,7 +76,7 @@ class MemoryResponse(BaseModel):
     tags: List[str]
     entities: dict
     importance: float
-    created_at: str
+    created_at: datetime
 
 
 class SearchRequest(BaseModel):
@@ -111,6 +112,12 @@ async def get_memories(
     """Get all memories with pagination."""
     memories = get_recent_memories(limit, offset, source)
     return memories
+
+
+@app.get("/memories/today", response_model=List[MemoryResponse])
+async def get_today(limit: int = Query(10, le=100)):
+    """Get memories from the past 24 hours."""
+    return get_today_memories(limit)
 
 
 @app.post("/memories", response_model=dict)
